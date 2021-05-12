@@ -85,12 +85,16 @@ IMAGES_ARGS = --platform $(subst $(space),$(comma),$(foreach arch,$(subst $(comm
 
 build: $(foreach arch,$(subst $(comma),$(space),$(ARCHES)),$(foreach binary,$(BINARIES),bin/linux/$(call gotodockerarch,$(arch))/$(binary)))
 
+licensecheck: BUILD_ARGS=--debug
+licensecheck: build
+	lichen -c .lichen.yaml $(foreach arch,$(subst $(comma),$(space),$(ARCHES)),$(foreach binary,$(BINARIES),bin/linux/$(call gotodockerarch,$(arch))/$(binary)))
+
 ci: validate unit build images
 
 $(TARGETS): vendor/modules.txt
 	./scripts/$@
 
-.PHONY: $(TARGETS) build ci images unit validate
+.PHONY: $(TARGETS) build ci images unit validate list-binaries
 
 else
 
